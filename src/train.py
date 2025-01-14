@@ -1,6 +1,7 @@
 from gymnasium.wrappers import TimeLimit
 from env_hiv import HIVPatient
 import numpy as np
+import joblib
 
 env = TimeLimit(
     env=HIVPatient(domain_randomization=False), max_episode_steps=200
@@ -11,7 +12,24 @@ env = TimeLimit(
 # You have to implement your own agent.
 # Don't modify the methods names and signatures, but you can add methods.
 # ENJOY!
+
 class ProjectAgent:
+    
+
+    def act(self, observation, use_random=False):
+        sas = [np.concatenate([observation, np.array([i])]) for i in range(4)]# SA pour chaque action possible
+        qs = [self.q.predict([SA]) for SA in sas] # q pour chaque action possible
+        action = np.argmax(qs)
+        return action
+    
+    def save(self, path='model.pth'):
+        pass
+
+    def load(self):
+        self.q = joblib.load(r"RF_Q.pkl")
+
+
+class ProjectAgent0:
     def __init__(self,eps=0.04):
 
         self.eps = eps
